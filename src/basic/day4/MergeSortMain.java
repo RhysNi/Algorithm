@@ -20,24 +20,23 @@ public class MergeSortMain {
         int maxSize = 100;
         int maxValue = 100;
 
+        System.out.println("--- MergeSort test start ---");
         for (int i = 0; i < testTime; i++) {
             int[] arr1 = CommonUtils.buildRandomArray(maxSize, maxValue);
             int[] arr2 = CommonUtils.copyArray(arr1);
 
-            System.out.println("--- MergeSortByRecursion test start ---");
+            // 递归法
             MergeSortByRecursion.mergeSort(arr1);
-            System.out.println("--- MergeSortByRecursion test end ---");
-
-            System.out.println("--- MergeSortNonRecursion test start ---");
+            // 步长法
             MergeSortNonRecursion.mergeSort(arr2);
-            System.out.println("--- MergeSortNonRecursion test end ---");
 
             if (!CommonUtils.isEqual(arr1, arr2)) {
-                System.out.println("排序出错了");
+                System.out.println("MergeSort test error");
                 printArray(arr1);
                 printArray(arr2);
             }
         }
+        System.out.println("--- MergeSort test success ---");
     }
 
 

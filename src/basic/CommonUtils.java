@@ -1,5 +1,7 @@
 package basic;
 
+import java.util.Random;
+
 /**
  * @author Rhys.Ni
  * @version 1.0
@@ -34,6 +36,43 @@ public class CommonUtils {
             System.out.print(i < arr.length - 1 ? "," : "");
         }
         System.out.print("]\n");
+    }
+
+    public static boolean isEqual(int[] arr1, int[] arr2) {
+        if ((arr1 == null && arr2 != null) || (arr1 != null && arr2 == null)) {
+            return false;
+        }
+        if (arr1 == null && arr2 == null) {
+            return true;
+        }
+        if (arr1.length != arr2.length) {
+            return false;
+        }
+        for (int i = 0; i < arr1.length; i++) {
+            if (arr1[i] != arr2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static int[] buildRandomArray(int maxSize, int maxValue) {
+        int[] arr = new int[maxSize];
+        for (int i = 0; i < maxSize; i++) {
+            arr[i] = new Random().nextInt(maxValue);
+        }
+        return arr;
+    }
+
+    public static int[] copyArray(int[] arr) {
+        if (arr == null) {
+            return null;
+        }
+        int[] res = new int[arr.length];
+        for (int i = 0; i < arr.length; i++) {
+            res[i] = arr[i];
+        }
+        return res;
     }
 
     private CommonUtils() {

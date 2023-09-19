@@ -77,4 +77,15 @@ public class CommonUtils {
 
     private CommonUtils() {
     }
+
+    public static int[] copyArrayRange(int[] arr, int rightIndex) {
+        if (arr == null) {
+            return null;
+        }
+        int[] res = new int[rightIndex];
+        for (int i = 0; i < rightIndex; i++) {
+            res[i] = arr[i];
+        }
+        return res;
+    }
 }

@@ -1,4 +1,4 @@
-package basic.day4;
+package basic.mergesort;
 
 /**
  * <p>

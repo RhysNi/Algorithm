@@ -1,4 +1,4 @@
-package basic.quicksort;
+package quicksort;
 
 import basic.CommonUtils;
 

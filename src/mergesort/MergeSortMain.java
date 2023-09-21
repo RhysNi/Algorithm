@@ -1,4 +1,4 @@
-package basic.mergesort;
+package mergesort;
 
 import basic.CommonUtils;
 

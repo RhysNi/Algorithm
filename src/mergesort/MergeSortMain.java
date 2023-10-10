@@ -39,7 +39,6 @@ public class MergeSortMain {
         System.out.println("--- MergeSort test success ---");
     }
 
-
     public static void merge(int[] arr, int startIndex, int mid, int endIndex) {
         // 辅助数组用于最终合并数据，长度为起始索引到结束索引的所有元素的个数
         int[] tempArr = new int[endIndex - startIndex + 1];

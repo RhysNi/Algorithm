@@ -1,8 +1,6 @@
 package mergesort.cases;
 
 import basic.CommonUtils;
-import mergesort.MergeSortByRecursion;
-import mergesort.MergeSortNonRecursion;
 
 import static basic.CommonUtils.printArray;
 

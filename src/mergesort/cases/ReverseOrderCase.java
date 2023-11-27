@@ -38,13 +38,20 @@ public class ReverseOrderCase {
 
 
         for (int i = 0; i < testTime; i++) {
+//            int[] arr1 = new int[]{8, 7, 3, 4, 3, 7, 2};
+
             int[] arr1 = CommonUtils.buildRandomArray(maxSize, maxValue);
             int[] arr2 = CommonUtils.copyArray(arr1);
 
-            if (calcu(arr1) != calcuByMergeSort(arr2)) {
+            int calcu = calcu(arr1);
+
+            int calcuByMergeSort = calcuByMergeSort(arr2);
+
+            if (calcu != calcuByMergeSort) {
                 System.out.println("ReverseOrderCase test error");
                 printArray(arr1);
                 printArray(arr2);
+                return;
             }
         }
         System.out.println("--- ReverseOrderCase test success ---");
@@ -53,14 +60,81 @@ public class ReverseOrderCase {
 
 
     private static int calcu(int[] arr) {
+        if (arr == null || arr.length < 2) {
+            return 0;
+        }
+
+        int count = 0;
+
         for (int i = 0; i < arr.length; i++) {
-            for (int j = 0; j < i; j++) {
+            for (int j = i+1; j < arr.length ; j++) {
+                // 对小的元素进行累加和
+                count += arr[j] < arr[i] ? 1 : 0;
             }
         }
-        return 0;
+        return count;
     }
 
     private static int calcuByMergeSort(int[] arr) {
-        return 0;
+        if (arr == null || arr.length < 2) {
+            return 0;
+        }
+
+        int Left = 0;
+        int Right = arr.length - 1;
+        return process(arr, Left, Right);
+    }
+
+    private static int process(int[] arr, int startIndex, int endIndex) {
+        // 开始到结束只存在一个数，不存在小和问题，不做累加操作
+        if (startIndex == endIndex) {
+            return 0;
+        }
+
+        // 取中位数
+        int mid = startIndex + ((endIndex - startIndex) >> 1);
+
+        // 由于三个阶段都有可能产生逆序对，因此需要将三个阶段的小和进行累加
+        return process(arr, startIndex, mid) + process(arr, mid + 1, endIndex) + merge(arr, startIndex, mid, endIndex);
+    }
+
+    private static int merge(int[] arr, int startIndex, int mid, int endIndex) {
+
+        // 定义缓存数组
+        int[] tmpArr = new int[endIndex - startIndex + 1];
+        // 定义缓存数组启始索引 从右往左存
+        int tmpArrIdx = tmpArr.length - 1;
+
+        // 定义左右组的指针所在位置，左组从中位往左移，右组从最大长度往中位移
+        int LMergeStartIdx = mid;
+        int RMergeStartIdx = endIndex;
+
+        // 定义逆序对总数初始值
+        int reverseOrderCount = 0;
+
+        // 左右组都没发生越界
+        while (LMergeStartIdx >= startIndex && RMergeStartIdx > mid) {
+            // 计算从右组当前指针位置到右组起始索引有多少个元素即为存在多少组逆序对
+            reverseOrderCount += arr[LMergeStartIdx] > arr[RMergeStartIdx] ? (RMergeStartIdx - mid) : 0;
+            // 拷贝数组并移动指针，我们这里是升序排，所以从右往左拷贝
+            tmpArr[tmpArrIdx--] = arr[LMergeStartIdx] > arr[RMergeStartIdx] ? arr[LMergeStartIdx--] : arr[RMergeStartIdx--];
+        }
+
+        // 右组越界，拷贝左组
+        while (LMergeStartIdx >= startIndex) {
+            tmpArr[tmpArrIdx--] = arr[LMergeStartIdx--];
+        }
+
+        // 左组越界，拷贝右组
+        while (RMergeStartIdx > mid) {
+            tmpArr[tmpArrIdx--] = arr[RMergeStartIdx--];
+        }
+
+        // 将有序元素替换到原 arr 数组中对应位置上
+        for (int i = 0; i < tmpArr.length; i++) {
+            arr[startIndex + i] = tmpArr[i];
+        }
+
+        return reverseOrderCount;
     }
 }

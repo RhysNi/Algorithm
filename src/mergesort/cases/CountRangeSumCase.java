@@ -15,70 +15,89 @@ import static basic.CommonUtils.printArray;
  * @CopyRight :　<a href="https://blog.csdn.net/weixin_44977377?type=blog">倪倪N</a>
  */
 public class CountRangeSumCase {
-    public static void main(String[] args) {
-        int testTime = 500_000;
-        int maxSize = 100;
-        int maxValue = 100;
 
-        System.out.println("--- DoubleSumCase test start ---");
-
-
-        for (int i = 0; i < testTime; i++) {
-            int[] arr1 = new int[]{5, 8, 3, 7, 2, 4};
-
-//            int[] arr1 = CommonUtils.buildRandomArray(maxSize, maxValue);
-            int[] arr2 = CommonUtils.copyArray(arr1);
-
-            int calcu = calcu(arr1,-2,5);
-
-            int calcuByMergeSort = calcuByMergeSort(arr2);
-
-            if (calcu != calcuByMergeSort) {
-                System.out.println("DoubleSumCase test error");
-                printArray(arr1);
-                printArray(arr2);
-                return;
-            }
-        }
-        System.out.println("--- DoubleSumCase test success ---");
-    }
-
-    private static int calcu(int[] arr, int lower, int upper) {
-        if (arr == null || arr.length == 0) {
+    public int countRangeSum(int[] nums, int lower, int upper) {
+        if (nums == null || nums.length == 0) {
             return 0;
         }
 
         // 定义前缀和数组
-        int[] preSumArr = new int[arr.length];
+        long[] preSumArr = new long[nums.length];
 
         // 第一个元素没有累加元素，即为本身
-        preSumArr[0] = arr[0];
+        preSumArr[0] = nums[0];
         // 计算第二个元素开始的前缀和
-        for (int i = 1; i < arr.length; i++) {
-            preSumArr[i] = arr[i] + preSumArr[i - 1];
+        for (int i = 1; i < nums.length; i++) {
+            preSumArr[i] = nums[i] + preSumArr[i - 1];
         }
 
-        return countCalcu(preSumArr, 0, preSumArr.length - 1, lower, upper);
+        return process(preSumArr, 0, preSumArr.length - 1, lower, upper);
     }
 
-    private static int countCalcu(int[] preSumArr, int L, int R, int lower, int upper) {
+    private static int process(long[] preSumArr, int L, int R, int lower, int upper) {
+        // 求在原始arr[L...R]中，有多少个子数组累加和在【lower,upper】上
         if (L == R) {
-            return 0;
+            // 代表从0 ... L找到一个原始子数组
+            return preSumArr[L] >= lower && preSumArr[L] <= upper ? 1 : 0;
+        }
+        int M = L + ((R - L) >> 1);
+        return process(preSumArr, L, M, lower, upper) + process(preSumArr, M + 1, R, lower, upper) + merge(preSumArr, L, M, R, lower, upper);
+    }
+
+    private static int merge(long[] preSumArr, int L, int M, int R, int lower, int upper) {
+        int result = 0;
+        // 滑动窗口，winL不能小于 X-upper ,winR 不能大于 X-lower
+        int winL = L;
+        int winR = L;
+
+        // 计算达标元素个数
+        for (int i = M + 1; i <= R; i++) {
+            // X-upper
+            long min = preSumArr[i] - upper;
+            // X-lower
+            long max = preSumArr[i] - lower;
+            // preSumArr[winR]如果比max值小窗口右边界就往右滑动，但是最多滑到中点位置
+            while (winR <= M && preSumArr[winR] <= max) {
+                winR++;
+            }
+            // preSumArr[winL]如果比min值小窗口左边界就往右滑动，但是最多滑到中点位置
+            while (winL <= M && preSumArr[winL] < min) {
+                winL++;
+            }
+            // 比如 winL = 0, winR = 3 , 3-0就能得到中间包含几个数，随着指针移动，就能得到整个长度总共有多少元素符合条件
+            result += winR - winL;
         }
 
-        int M = (L + (R - L) >> 1);
-        return proces(preSumArr, L, M, lower, upper) + proces(preSumArr, M + 1, R, lower, upper) + merge(preSumArr, L, M, R, lower, upper);
-    }
+        // 合并
+        // 定义临时空间排序数组元素
+        long[] tmpArr = new long[R - L + 1];
+        // 定义临时数组起始索引
+        int idx = 0;
+        // 定义左右组的指针所在位置
+        int partLStartIdx = L;
+        int partRStartIdx = M + 1;
 
-    private static int merge(int[] preSumArr, int l, int m, int r, int lower, int upper) {
-        return 0;
-    }
+        // 左右组都没发生越界
+        while (partLStartIdx <= M && partRStartIdx <= R) {
+            // 拷贝数组并移动指针
+            tmpArr[idx++] = preSumArr[partLStartIdx] <= preSumArr[partRStartIdx] ? preSumArr[partLStartIdx++] : preSumArr[partRStartIdx++];
+        }
 
-    private static int proces(int[] preSumArr, int l, int m, int lower, int upper) {
-        return 0;
-    }
+        //右组越界，拷贝左组
+        while (partLStartIdx <= M) {
+            tmpArr[idx++] = preSumArr[partLStartIdx++];
+        }
 
-    private static int calcuByMergeSort(int[] arr) {
-        return 0;
+        // 左组越界，拷贝右组
+        while (partRStartIdx <= R) {
+            tmpArr[idx++] = preSumArr[partRStartIdx++];
+        }
+
+        // 将有序元素替换到原 nums 数组中对应位置上
+        for (int i = 0; i < tmpArr.length; i++) {
+            preSumArr[L + i] = tmpArr[i];
+        }
+
+        return result;
     }
 }

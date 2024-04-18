@@ -26,7 +26,7 @@ public class HeapSort {
 
         // O(N*logN):从上往下建堆是基于节点层数的
 //            for (int i = 0; i < arr.length; i++) {
-//                MaxHeap.upGrades(arr, i);
+//                MaxHeap.heapInsert(arr, i);
 //            }
 
         // O(N)

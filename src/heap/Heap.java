@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import static basic.CommonUtils.swap;
-import static heap.Heap.MaxHeap.heapIfy;
+
 
 /**
  * @author Rhys.Ni
@@ -41,7 +41,7 @@ public class Heap {
             // val放到heap对应位置
             this.heap[this.heapSize] = val;
             // 向上升级
-            upGrades(this.heap, this.heapSize++);
+            heapInsert(this.heap, this.heapSize++);
         }
 
         // 返回最大值，并且删除大根堆中的最大值
@@ -54,14 +54,7 @@ public class Heap {
             return result;
         }
 
-        public static void heapInsert(int[] arr, int index) {
-            while (arr[index] > arr[(index - 1) / 2]) {
-                swap(arr, index, (index - 1) / 2);
-                index = (index - 1) / 2;
-            }
-        }
-
-        private static void upGrades(int[] heap, int idx) {
+        private static void heapInsert(int[] heap, int idx) {
             // 拿idx节点的值与它的父根进行比较，比父节点大则与父节点交换，依次向上对比，直到不大于父节点的值停止，或者移动到了整个堆的根节点停止
             while (heap[idx] > heap[(idx - 1) / 2]) {
                 swap(heap, idx, (idx - 1) / 2);

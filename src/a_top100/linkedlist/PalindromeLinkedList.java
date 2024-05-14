@@ -1,4 +1,4 @@
-package a_top100;
+package a_top100.linkedlist;
 
 /**
  * <p>
